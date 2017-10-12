@@ -1,0 +1,107 @@
+/* PRODUCT ITEM VIEW*/
+
+.collection-59c92dd3b078692565ce6c5f,
+.collection-59cc32816f4ca34545de56d5 {
+    .button-enquiry-trigger-form {
+        display: none;
+    }
+    .ProductItem-summary:not(.price-visible) {
+        .product-price,
+        .sqs-add-to-cart-button-wrapper {
+            display: none;
+        }
+        .button-enquiry-trigger-form {
+            display: block;
+        }
+    }
+}
+
+.ProductItem-details {
+    .sqs-add-to-cart-button {
+        width: 200px;
+        padding: 1em 0 !important;
+        border: 2px solid @magenta;
+        transition: opacity 1s, background 0.2s;
+        color: @magenta !important;
+        &:hover {
+            background: @magenta !important;
+            color: white !important;
+        }
+    }
+}
+
+.ProductItem-summary {
+    position: relative;
+    .button-enquiry-trigger-form {
+        opacity: 1;
+        order: 99;
+        transition: opacity 1s;
+        &.ready {
+            opacity: 1;
+        }
+        .button-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: @magenta;
+            cursor: pointer;
+            width: 200px;
+            height: 50px;
+            border: 2px solid @magenta;
+            transition: opacity 1s, background 0.2s;
+            text-transform: uppercase;
+            font-family: din-condensed-web;
+            font-weight: 400;
+            .button {
+                font-size: 16px;
+                letter-spacing: .05em;
+            }
+            &:hover,
+            &:focus {
+                background: @magenta;
+                color: white;
+            }
+        }
+    }
+}
+
+/* MODAL */
+.modal-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+    background:rgba(10, 10, 10, 0.5);
+    z-index:999999999;
+    transition: opacity 0.6s;
+    &.hidden {
+        opacity: 0;
+        visibility: hidden;
+        z-index: -4;
+        .modal-content {
+            transform: translateY(30px);
+        }
+    }
+    .modal-content {
+        transition: transform 0.6s;
+        .close {
+            text-align: right;
+            opacity: 0.2;
+            cursor: pointer;
+        }
+        margin-top:8vw;
+        max-width:500px;
+        background:white;
+        padding:1em;
+    }
+}
