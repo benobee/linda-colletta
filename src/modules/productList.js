@@ -1,5 +1,8 @@
-import Vue from "vue";
+import Vue from 'vue';
 import axios from "axios";
+import PubSub from "./pubsub";
+
+const Events = new PubSub();
 
 const productList = {
     init(collection) {
@@ -8,14 +11,11 @@ const productList = {
         const hasCachedData = sessionStorage.getItem("shop-data", true);
 
         if (hasCachedData === "true") {
-            console.log("cached data available");
-
             const data = JSON.parse(sessionStorage.getItem("shop"));
 
             //console.log("data fetched from cache");
             this.renderGallery(data, options);
         } else {
-            console.log("getting shop data");
             this.getShopData(collection, options);
         }
     },

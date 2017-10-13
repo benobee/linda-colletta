@@ -39,7 +39,8 @@ const input = {
     resolve: {
         alias: {
             'masonry': 'masonry-layout',
-            'isotope': 'isotope-layout'
+            'isotope': 'isotope-layout',
+            'vue': 'vue/dist/vue.min.js'
         }
     }
 };
@@ -59,6 +60,17 @@ Object.assign(WEBPACK_CONFIG, input);
 const rules = [];
 
 /*********************/
+
+//@rule: Vue
+const vue = {
+    test: /\.vue$/,
+    loader: 'vue-loader',
+    options: {
+        extractCSS: true
+    }
+}
+
+rules.push(vue);
 
 // @rule: Babel
 const babel = {
@@ -190,6 +202,16 @@ postCSS.forEach((item) => {
 });
 
 /*********************/
+//@plugin: Vue components
+const vueComponents = new webpack.DefinePlugin({
+    'process.env': {
+        NODE_ENV: '"production"'
+    }
+})
+
+if (isProduction) {
+    plugins.push(vueComponents);
+}
 
 // @plugin: for minifying javascript
 const minify = new webpack.optimize.UglifyJsPlugin({
