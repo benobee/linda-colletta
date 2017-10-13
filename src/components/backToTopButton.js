@@ -1,3 +1,5 @@
+import Events from "../modules/events";
+
 const backToTopButton = {
     template: `
         <div id="backToTop" class="back-to-top button-wrapper" v-bind:class="{hidden: !isVisible}" v-on:click="scrollTop">

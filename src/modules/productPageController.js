@@ -1,9 +1,7 @@
 import Vue from "vue";
-import PubSub from "./pubsub";
+import Events from "./events";
 
-const Events = new PubSub();
-
-const productPage = {
+const productPageController = {
     init(productPage) {
         this.cacheDOM(productPage);
 
@@ -150,4 +148,4 @@ const productPage = {
     },
 };
 
-export default productPage;
+export default productPageController;

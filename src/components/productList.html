@@ -1,0 +1,42 @@
+<div id="app" class="app data-ready has-custom-shop" :class="appLoaded" data-collection="gallery-collection,gallery-collection-2" data-prices="false">
+  <div class="content" v-bind:class="scrollClasses">
+    <div class="filters" v-on:click="menuOpen">
+      <div class="category filter">
+        <div v-for="item in categories" v-bind:key="item.id" class="select item" v-bind:class="{ active: item.isActive }" v-on:click="filterByCategory(item)">
+          {{ item.category }}
+        </div>
+      </div>
+      <div class="tag filter" :class="hasTags">
+        <div v-for="item in tags" v-bind:key="item.id" class="select item" v-bind:class="{ active: item.isActive }" v-on:click="filterByTag(item.slug, item)" v-if="item.tag !== 'sell'">
+            {{ item.tag }}
+        </div>      
+      </div>      
+    </div>
+    <transition-group name="list-complete" tag="div" class="collection grid product-list">
+      <div v-for="item in currentList" v-bind:key="item.id" class="item product" :data-tags="item.tags">
+        <a v-bind:href="access(item.fullUrl)" class="link">
+        <div class="inner-content">
+          <div class="media-wrapper">
+            <image-component :data-src="item.items[0].assetUrl + '?format=300w'"></image-component>
+          </div>
+          <div class="product-info">
+            <div class="product-title">
+              {{ item.title }}
+            </div>            
+            <div class="product-price" v-if="sessionStorage.getItem('access') === 'true'">
+              {{ item.price | formatPrice }}
+            </div> 
+          </div>
+        </div>
+        </a>
+      </div>
+    </transition-group>
+    <div class="button-wrapper centered">
+         <a href="#load-more" class="load-more">Load More</a>
+    </div>
+  </div>
+  <div class="loading-wrapper">
+      <div class="loader"></div>
+  </div>
+  <back-to-top></back-to-top>
+</div>  
