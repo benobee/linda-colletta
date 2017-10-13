@@ -181,6 +181,12 @@ const productList = {
                     items = items.filter(item => item.price >= options.priceMin);
                 }
 
+                sessionStorage.setItem("access", false);
+
+                if (options.availableToSell === "true") {
+                    sessionStorage.setItem("access", true);
+                } 
+
                 return {
                     search: {
                         isActive: false,
@@ -287,7 +293,6 @@ const productList = {
                     return array;
                 },
                 access(url) {
-
                     if (this.sell == "true") {
                         url = url + "?access=true";
                     }

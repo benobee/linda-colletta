@@ -32,7 +32,7 @@ const productPage = {
             params[item[0]] = item[1];
         });
 
-        if (params.access === "true") {
+        if (params.access === "true" || sessionStorage.getItem("access") === "true") {
             access = true;
         }
 
