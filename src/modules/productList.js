@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import axios from "axios";
 import PubSub from "./pubsub";
+import { productListImage, backToTopButton } from "../components/index";
 
 const Events = new PubSub();
 
@@ -87,63 +88,9 @@ const productList = {
             });
     },
     renderGallery(data, options) {
-        //back to top button
-        Vue.component('back-to-top', {
-            template: `
-                <div id="backToTop" class="back-to-top button-wrapper" v-bind:class="{hidden: !isVisible}" v-on:click="scrollTop">
-                    <div class="has-background-image"></div>
-                </div>
-            `,
-            data() {
-                return {
-                    position: {
-                        top: 0
-                    },
-                    isVisible: false
-                }
-            },
-            methods: {
-                scrollTop() {
-                    window.scroll({
-                        top: 0,
-                        left: 0,
-                        behavior: 'smooth'
-                    });
-                }
-            },
-            mounted() {
-                Events.on("show-back-to-top-button", (button) => {
-                    this.position.top = button.distanceAway;
-                    this.isVisible = button.state;
-                });
-            }
-        });
-
-        Vue.component("image-component", {
-            template: '<img v-bind:src="src" v-bind:class="{loaded: imageLoaded}"/>',
-            data() {
-                return {
-                    src: "/",
-                    loaded: false
-                }
-            },
-            mounted() {
-                this.src = this.$el.dataset.src;
-                this.$el.onload = this.checkImage();
-            },
-            methods: {
-                checkImage() {
-                    this.loaded = true;
-                }
-            },
-            computed: {
-                imageLoaded($el) {
-                    if (this.loaded) {
-                        return true;
-                    }
-                }
-            }
-        });
+        //extend components
+        Vue.component('back-to-top', backToTopButton);
+        Vue.component("image-component", productListImage);
 
         //render the gallery
         const galleryList = new Vue({
