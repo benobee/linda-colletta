@@ -2,7 +2,7 @@ import Vue from "vue";
 import Events from "./events";
 
 const productPageController = {
-    init(productPage) {
+    init (productPage) {
         this.cacheDOM(productPage);
 
         if (this.testAccess()) {
@@ -14,33 +14,31 @@ const productPageController = {
         this.buildTargetElements();
         this.buildComponents();
     },
-    cacheDOM(parent) {
+    cacheDOM (parent) {
         this.productDetails = parent.querySelector(".ProductItem-summary");
     },
-    testAccess() {
+    testAccess () {
         let search = location.search;
 
-        let params = {};
-
-        let access = false;
+        const params = {};
 
         search = search.substring(1, search.length).split("&");
         search = search.forEach((item) => {
             item = item.split("=");
-            params[item[0]] = item[1];
+            params[ item[ 0 ] ] = item[ 1 ];
         });
 
         if (params.access === "true" || sessionStorage.getItem("access") === "true") {
-            access = true;
+            search = true;
         }
 
-        return access;
+        return search;
     },
-    buildTargetElements() {
+    buildTargetElements () {
         //button inject point
         this.button = document.createElement("div");
         this.button.setAttribute("class", "button-enquiry-trigger-form");
-        this.button.innerHTML = '<enquiry-button></enquiry-button>';
+        this.button.innerHTML = "<enquiry-button></enquiry-button>";
 
         const targets = document.querySelectorAll(".ProductItem-details");
 
@@ -52,14 +50,14 @@ const productPageController = {
         //modal inect point
         this.modal = document.createElement("div");
         this.modal.setAttribute("id", "modal-enquiry-form");
-        this.modal.innerHTML = '<modal></modal>';
+        this.modal.innerHTML = "<modal></modal>";
 
         const targetRender = document.querySelector(".Site");
 
         targetRender.appendChild(this.modal);
     },
-    buildComponents() {
-        Vue.component('modal', {
+    buildComponents () {
+        Vue.component("modal", {
             template: `
                 <div class="modal-wrapper" v-bind:class="{hidden: !isVisible}" v-on:click="toggleActive">
                   <div class="modal-content" v-on:click="stopProp">
@@ -68,20 +66,20 @@ const productPageController = {
                   </div>
                 </div>
             `,
-            data() {
+            data () {
                 return {
                     isVisible: false,
                     message: "I am enquiring about: "
-                }
+                };
             },
             methods: {
-                toggleActive() {
+                toggleActive () {
                     this.isVisible = !this.isVisible;
                 },
-                stopProp(e) {
+                stopProp (e) {
                     e.stopPropagation();
                 },
-                injectFormData() {
+                injectFormData () {
                     const form = document.querySelector("#footerBlocksTop .sqs-block-form");
 
                     const inject = document.querySelector(".modal-form");
@@ -89,21 +87,21 @@ const productPageController = {
                     inject.appendChild(form);
 
                     //enter the title into the message form
-                    const subject = document.getElementById('text-yui_3_17_2_49_1506560555564_6186-field');
+                    const subject = document.getElementById("text-yui_3_17_2_49_1506560555564_6186-field");
 
                     const title = document.querySelector(".ProductItem-details-title").innerText;
-                    
-                    const message = document.getElementById('textarea-yui_3_17_2_49_1506560555564_6187-field');
+
+                    const message = document.getElementById("textarea-yui_3_17_2_49_1506560555564_6187-field");
 
                     subject.value = title;
                     message.value = this.message + title;
                 }
             },
-            beforeMount() {
+            beforeMount () {
                 //button inject point
                 this.button = document.createElement("div");
                 this.button.setAttribute("class", "button-enquiry-trigger-form");
-                this.button.innerHTML = '<enquiry-button></enquiry-button>';
+                this.button.innerHTML = "<enquiry-button></enquiry-button>";
 
                 const targets = document.querySelectorAll(".ProductItem-details");
 
@@ -112,7 +110,7 @@ const productPageController = {
                     this.button.classList.add("ready");
                 });
             },
-            mounted() {
+            mounted () {
                 this.injectFormData();
                 Events.on("buttonClick", () => {
                     this.isVisible = true;
@@ -121,30 +119,35 @@ const productPageController = {
         });
 
         const modal = new Vue({
-            el: '#modal-enquiry-form'
+            el: "#modal-enquiry-form"
         });
 
-        Vue.component('enquiry-button', {
+        Vue.component("enquiry-button", {
             template: `
                 <div v-on:click="showForm" class="button-wrapper">
                     <div class="button">{{ text }}</div>
                 </div>
             `,
-            data() {
+            data () {
                 return {
                     text: "Enquire"
-                }
+                };
             },
             methods: {
-                showForm() {
+                showForm () {
                     Events.emit("buttonClick");
                 }
             }
         });
 
         const button = new Vue({
-            el: '.ProductItem-details .button-enquiry-trigger-form'
+            el: ".ProductItem-details .button-enquiry-trigger-form"
         });
+
+        return {
+            button,
+            modal
+        };
     },
 };
 

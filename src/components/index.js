@@ -6,4 +6,4 @@ export {
 	productList,
 	productListImage,
 	backToTopButton
-}
+};

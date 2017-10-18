@@ -2,8 +2,8 @@ import Events from "../modules/events";
 
 const productList = (data, options) => {
     return {
-        el: '#app',
-        data() {
+        el: "#app",
+        data () {
             let items = this.slimArray(data.items);
 
             if (options.tag && options.tag.length > 0) {
@@ -11,29 +11,26 @@ const productList = (data, options) => {
                 const filters = options.tag.split(",");
 
                 items = items.filter((item) => {
+                    let result = false;
+
                     if (item.tags && item.tags.length > 0) {
+                        const hasTag = item.tags.filter((tag) => tag === filters[ 0 ]);
 
-                        const tags = item.tags.filter((tag) => {
-                            const index = filters.indexOf(tag);
-
-                            if (index > -1) {
-                                return true;
-                            }
-                        });
-
-                        if (tags.length > 0) {
-                            return item;
+                        if (hasTag.length) {
+                            result = item;
                         }
                     }
+
+                    return result;
                 });
             }
 
             if (options.priceMax && options.priceMax.length > 0) {
-                items = items.filter(item => item.price <= options.priceMax);
+                items = items.filter((item) => item.price <= options.priceMax);
             }
 
             if (options.priceMin && options.priceMin.length > 0) {
-                items = items.filter(item => item.price >= options.priceMin);
+                items = items.filter((item) => item.price >= options.priceMin);
             }
 
             sessionStorage.setItem("access", false);
@@ -50,7 +47,7 @@ const productList = (data, options) => {
                 },
                 tags: [],
                 categories: this.categoryTags(items, "category"),
-                items: items,
+                items,
                 scrollHeight: 0,
                 categoryItems: [],
                 currentItems: [],
@@ -68,20 +65,24 @@ const productList = (data, options) => {
             };
         },
         filters: {
-            formatPrice(price) {
-                price = price / 100;
+            formatPrice (price) {
+                price /= 100;
                 price = price.toFixed(2).toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
 
-                return "$" + price;
+                return `$${ price}`;
             }
         },
         computed: {
-            scrollClasses() {
+            scrollClasses () {
+                let className = "";
+
                 if (this.scrollHeight < -150) {
-                    return "scrolling";
+                    className = "scrolling";
                 }
+
+                return className;
             },
-            currentList() {
+            currentList () {
                 /* this is the main rendered list outputted to
                 the DOM target area */
 
@@ -90,11 +91,29 @@ const productList = (data, options) => {
 
                 if (this.search.isActive) {
                     //store cloned list of items in category
-                    array = array.slice(0).filter(item => item.categories == this.search.category);
-                    this.generateTags(array);
+                    array = array.slice(0);
 
                     //filter the array from search criteria
-                    array = array.filter(item => item.categories == this.search.category);
+                    const results = [];
+
+                    //filter the array from search criteria
+                    array.forEach((item) => {
+                        let match = false;
+
+                        item.categories.forEach((filter) => {
+                            if (this.search.category === filter) {
+                                match = true;
+                            }
+                        });
+
+                        if (match) {
+                            results.push(item);
+                        }
+                    });
+
+                    array = results;
+
+                    this.generateTags(array);
 
                     if (this.search.tag.length > 0) {
                         array = this.tagFilter(array, this.search.tag);
@@ -109,22 +128,30 @@ const productList = (data, options) => {
 
                 return array;
             },
-            canSell() {
+            canSell () {
                 return this.sell;
             },
-            hasTags() {
+            hasTags () {
+                let className = "";
+
                 if (this.tags.length > 0) {
-                    return "has-tags";
+                    className = "has-tags";
                 }
+
+                return className;
             },
-            appLoaded() {
+            appLoaded () {
+                let className = "";
+
                 if (this.lifecycle.appLoaded) {
-                    return "data-loaded";
+                    className = "data-loaded";
                 }
+
+                return className;
             }
         },
         methods: {
-            categoryTags(items, type) {
+            categoryTags (items, type) {
                 let categoryArray = [];
 
                 items.forEach((item) => {
@@ -135,39 +162,43 @@ const productList = (data, options) => {
 
                 return this.filterToObject(categoryArray, type);
             },
-            tagFilter(array, filterName) {
+            tagFilter (array, filterName) {
                 array = array.filter((item) => {
                     if (item.tags && item.tags.length > 0) {
-                        const has = item.tags.filter(tag => tag == filterName);
-                        if (has.length) {
-                            return item;
+                        const has = item.tags.filter((tag) => tag === filterName);
+
+                        if (!has.length) {
+                            return false;
                         }
                     }
+
+                    return item;
                 });
 
                 return array;
             },
-            access(url) {
-                if (this.sell == "true") {
-                    url = url + "?access=true";
+            access (url) {
+                if (this.sell === "true") {
+                    url += "?access=true";
                 }
 
                 return url;
             },
-            menuOpen(e) {
+            menuOpen (e) {
                 e.currentTarget.classList.toggle("menu-open");
             },
-            generateUID() {
-                var firstPart = (Math.random() * 46656) | 0;
-                var secondPart = (Math.random() * 46656) | 0;
-                firstPart = ("000" + firstPart.toString(36)).slice(-3);
-                secondPart = ("000" + secondPart.toString(36)).slice(-3);
+            generateUID () {
+                let firstPart = (Math.random() * 46656) | 0;
+                let secondPart = (Math.random() * 46656) | 0;
+
+                firstPart = (`000${ firstPart.toString(36)}`).slice(-3);
+                secondPart = (`000${ secondPart.toString(36)}`).slice(-3);
                 return firstPart + secondPart;
             },
-            slugify(value) {
-                return value.toLowerCase().replace(/ /g, "-").replace(/-&-/g, "-").replace(/[^\w-]+/g, '');
+            slugify (value) {
+                return value.toLowerCase().replace(/ /g, "-").replace(/-&-/g, "-").replace(/[^\w-]+/g, "");
             },
-            generateTags(array) {
+            generateTags (array) {
                 //get tags from curent items
                 array = this.parseTags(array);
 
@@ -183,7 +214,7 @@ const productList = (data, options) => {
                 //reactive data change to update render logic
                 this.tags = array;
             },
-            resetAll() {
+            resetAll () {
                 //reset search
                 this.search.category = [];
                 this.search.tag = "";
@@ -192,12 +223,12 @@ const productList = (data, options) => {
                 //make all categories inactive to allow fo toggle behaviour
                 //tags are always inactive on render
                 this.categories.forEach((item) => {
-                    this.$set(item, 'isActive', false);
+                    this.$set(item, "isActive", false);
                 });
 
                 this.bindScrollEvents();
             },
-            slimArray(array) {
+            slimArray (array) {
                 //get rid of unnecessary data
                 array = array.map((item) => {
 
@@ -209,16 +240,22 @@ const productList = (data, options) => {
                         tags: item.tags,
                         fullUrl: item.fullUrl,
                         items: item.items,
-                        price: item.structuredContent.variants[0].price
+                        price: item.structuredContent.variants[ 0 ].price
                     };
                 });
 
                 return array;
             },
-            testArray(item, type) {
-                return item[type] !== undefined && (Array.isArray(item[type]) && item[type].length > 0);
+            testArray (item, type) {
+                let hasArray = false;
+
+                if (item[ type ]) {
+                    hasArray = item[ type ] !== (Array.isArray(item[ type ]) && item[ type ].length > 0);
+                }
+
+                return hasArray;
             },
-            parseTags(array) {
+            parseTags (array) {
                 //look for tag arrays in data and concatinate
                 let tags = [];
 
@@ -236,32 +273,33 @@ const productList = (data, options) => {
 
                 return tags;
             },
-            removeDuplicates(array) {
-                return array.filter(function(elem, index, self) {
-                    return index == self.indexOf(elem);
+            removeDuplicates (array) {
+                return array.filter((elem, index, self) => {
+                    return index === self.indexOf(elem);
                 });
             },
-            paginate(array) {
+            paginate (array) {
                 //limit the active items list based on page index to allow for
                 //infinite scroll and append
                 array = array.splice(0, this.pagination.currentIndex + this.pagination.pageLimit);
 
                 return array;
             },
-            bindScrollEvents() {
+            bindScrollEvents () {
                 window.addEventListener("load", this.executeScrollFunctions);
                 window.addEventListener("scroll", this.executeScrollFunctions);
             },
-            cleanupScrollEvents() {
+            cleanupScrollEvents () {
                 window.removeEventListener("load", this.executeScrollFunctions);
                 window.removeEventListener("scroll", this.executeScrollFunctions);
             },
-            executeScrollFunctions() {
+            executeScrollFunctions () {
                 const grid = this.$el.querySelector(".collection.grid.product-list");
                 const height = window.innerHeight;
                 const domRect = grid.getBoundingClientRect();
                 const triggerAmount = height - domRect.bottom;
                 const body = document.body.getBoundingClientRect();
+
                 this.scrollHeight = body.top;
 
                 if (domRect.top < -250) {
@@ -276,23 +314,24 @@ const productList = (data, options) => {
                 //show next page of pagination list
                 this.appendItems(triggerAmount);
             },
-            appendItems(triggerAmount) {
+            appendItems (triggerAmount) {
                 //when the page is scrolled to the bottom of the current items
                 //the next set or page of items will be auto appened to the bottom
                 if (triggerAmount > 0 && !this.pagination.scrollBottom) {
                     this.pagination.scrollBottom = true;
-                    let current = this.pagination.currentIndex;
+                    const current = this.pagination.currentIndex;
+
                     this.pagination.currentIndex = current + this.pagination.pageLimit + 1;
                     this.pagination.scrollBottom = false;
                 }
             },
-            filterToObject(array, type) {
+            filterToObject (array, type) {
                 //convert filter to object with id and active props
                 array = array.map((item) => {
 
                     const filter = {
                         id: this.generateUID(),
-                        [type]: item,
+                        [ type ]: item,
                         slug: this.slugify(item),
                         isActive: false
                     };
@@ -302,7 +341,7 @@ const productList = (data, options) => {
 
                 return array;
             },
-            scrollTop() {
+            scrollTop () {
                 let top = 0;
 
                 if (window.innerWidth > 960) {
@@ -310,7 +349,7 @@ const productList = (data, options) => {
                 }
 
                 const params = {
-                    top: top,
+                    top,
                     left: 0
                 };
 
@@ -320,7 +359,7 @@ const productList = (data, options) => {
 
                 window.scroll(params);
             },
-            filterByTag(tag, item) {
+            filterByTag (item) {
                 //tag filters
                 this.scrollTop();
                 this.pagination.currentIndex = 0;
@@ -331,18 +370,18 @@ const productList = (data, options) => {
                     item.isActive = false;
                 }
 
-                const i = this.search.tag.indexOf(tag);
+                const i = this.search.tag.indexOf(item.tag);
 
                 if (i === -1) {
                     //toggle between tags
                     this.search.tag = "";
-                    this.search.tag = tag;
+                    this.search.tag = item.tag;
                 } else {
                     //if item is active toggle off
                     this.search.tag = "";
                 }
             },
-            filterByCategory(item) {
+            filterByCategory (item) {
                 //category filters
                 this.scrollTop();
                 this.pagination.currentIndex = 0;
@@ -365,13 +404,13 @@ const productList = (data, options) => {
                 }
             }
         },
-        mounted() {
+        mounted () {
             setTimeout(() => {
                 this.lifecycle.appLoaded = true;
                 this.bindScrollEvents();
-            }, 600)
+            }, 600);
         }
     };
-}
+};
 
 export default productList;

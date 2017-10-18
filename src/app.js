@@ -2,15 +2,15 @@ import productListController from "./modules/productListController";
 import productPageController from "./modules/productPageController";
 
 const App = {
-    init() {
+    init () {
         this.cacheDOM();
         this.execute();
     },
-    cacheDOM() {
+    cacheDOM () {
         this.productCollection = document.querySelector(".app.has-custom-shop");
         this.productPage = document.querySelector(".collection-type-products.view-item");
     },
-    execute() {
+    execute () {
         //test for product collection and execute vue instance
         if (this.productCollection) {
             productListController.init(this.productCollection);

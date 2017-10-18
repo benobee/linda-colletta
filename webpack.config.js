@@ -72,16 +72,24 @@ const vue = {
 
 rules.push(vue);
 
-// @rule: Babel
-const babel = {
+// @rule: JS
+const JSRules = {
+    enforce: 'pre',
     test: /\.js$/,
     exclude: /node_modules/,
-    use: [{
-        loader: 'babel-loader'
-    }]
+    use: [
+        "babel-loader",
+        {
+            loader: "eslint-loader",
+            options: {
+                emitWarning: true,
+                fix: true
+            }
+        },
+    ]
 };
 
-rules.push(babel);
+rules.push(JSRules);
 
 /*********************/
 
@@ -91,7 +99,7 @@ const lessLoader = {
     exclude: /node_modules/,
     use: ExtractTextPlugin.extract({
         fallback: 'style-loader',
-        loader: [{
+        use: [{
                 loader: 'css-loader',
             },
             {

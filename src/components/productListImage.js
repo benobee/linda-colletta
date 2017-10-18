@@ -1,24 +1,28 @@
 const productListImage = {
-    template: '<img v-bind:src="src" v-bind:class="{loaded: imageLoaded}"/>',
-    data() {
+    template: "<img v-bind:src=\"src\" v-bind:class=\"{loaded: imageLoaded}\"/>",
+    data () {
         return {
             src: "/",
             loaded: false
-        }
+        };
     },
     computed: {
-        imageLoaded($el) {
+        imageLoaded () {
+            let loaded = false;
+
             if (this.loaded) {
-                return true;
+                loaded = true;
             }
+
+            return loaded;
         }
     },
     methods: {
-        checkImage() {
+        checkImage () {
             this.loaded = true;
         }
     },
-    mounted() {
+    mounted () {
         this.src = this.$el.dataset.src;
         this.$el.onload = this.checkImage();
     }
