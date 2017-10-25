@@ -3,26 +3,13 @@ import axios from "axios";
 import { productList, productListImage, backToTopButton } from "../components/index";
 //import JSONdata from "./data.json";
 
-const test = false;
+/*const test = false;*/
 
 const productListController = {
     init (collection) {
         const options = this.getShopOptions(collection);
 
-        if (test) {
-            //this.renderGallery(JSONdata, options);
-        } else {
-            const hasCachedData = sessionStorage.getItem("shop-data", true);
-
-            if (hasCachedData === "true") {
-                const data = JSON.parse(sessionStorage.getItem("shop"));
-
-                //console.log("data fetched from cache");
-                this.renderGallery(data, options);
-            } else {
-                this.getShopData(collection, options);
-            }
-        }
+        this.getShopData(collection, options);
     },
     getShopOptions (collection) {
         const availableToSell = collection.dataset.prices;
@@ -42,23 +29,27 @@ const productListController = {
     },
     getShopData (collection, options) {
         //get json data via SQS API and Axios
-        const getShop = (url, params) => {
-            return axios.get(url, {
-                params
-            });
+        const config = {
+            headers: {
+                "Cache-Control": "no-cache, no-store, must-revalidate"
+            },
+            params: {
+                format: "json",
+                nocache: true
+            }
         };
 
-        const params = {
-            format: "json"
+        const getShop = (url) => {
+            return axios.get(url, config);
         };
 
         let url = collection.dataset.collection;
 
         url = url.replace(/\s{1,10}/g, "").split(",");
 
-        const shopOne = getShop(`/${ url[ 0 ]}`, params);
+        const shopOne = getShop(`/${ url[ 0 ]}`);
 
-        const shopTwo = getShop(`/${ url[ 1 ]}`, params);
+        const shopTwo = getShop(`/${ url[ 1 ]}`);
 
         axios.all([shopOne, shopTwo])
             .then(axios.spread((responseOne, responseTwo) => {

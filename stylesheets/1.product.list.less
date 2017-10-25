@@ -53,6 +53,7 @@
     }
 }
 
+
 .app {
     &.data-loaded {
         .loading-wrapper {
@@ -332,6 +333,42 @@
                     opacity: 1;
                 }
             }
+        }
+    }
+}
+
+.filters .tag.filter.has-tags {
+    .select.item {
+        order: 99;
+        &[data-name="on-canvas"] {
+            order: 1 !important;
+        }
+        &[data-name="on-paper"] {
+            order: 2 !important;
+        }
+        &[data-name="small-scale"] {
+            order: 3 !important;
+        }
+        &[data-name="mid-scale"] {
+            order: 4 !important;
+        }
+        &[data-name="large-scale"] {
+            order: 5 !important;
+        }
+        &[data-name="blues-greens"] {
+            order: 6 !important;
+        }
+        &[data-name="pinks-purples"] {
+            order: 7 !important;
+        }
+        &[data-name="yellows-oranges"] {
+            order: 8 !important;
+        }
+        &[data-name="black-white"] {
+            order: 9 !important;
+        }
+        &[data-name="framed"] {
+            order: 10 !important;
         }
     }
 }
