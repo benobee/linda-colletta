@@ -20,15 +20,10 @@
     <div class="content" v-bind:class="scrollClasses">
       <div class="filters" v-on:click="menuOpen">
         <div class="category filter">
-          <div v-for="item in categories" v-bind:key="item.id" class="select item" v-bind:class="{ active: item.isActive }" v-on:click="filterByCategory(item)">
+          <div v-for="item in categories" :data-name="item.category" v-bind:key="item.id" class="select item" v-bind:class="{ active: item.isActive }" v-on:click="filterByCategory(item)">
             {{ item.category }}
           </div>
-        </div>
-        <div class="tag filter" :class="hasTags">
-          <div v-for="item in tags" v-bind:key="item.id" class="select item" v-bind:class="{ active: item.isActive }" v-on:click="filterByTag(item)" v-if="item.tag !== 'sell'">
-              {{ item.tag }}
-          </div>      
-        </div>      
+        </div>     
       </div>
       <transition-group name="list-complete" tag="div" class="collection grid product-list">
         <div v-for="item in currentList" v-bind:key="item.id" class="item product" :data-tags="item.tags">

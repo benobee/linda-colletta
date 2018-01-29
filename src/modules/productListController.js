@@ -1,15 +1,14 @@
 import Vue from "vue";
 import axios from "axios";
 import { productList, productListImage, backToTopButton } from "../components/index";
-//import JSONdata from "./data.json";
-
-/*const test = false;*/
+/*import JSONdata from "./data.json";*/
 
 const productListController = {
     init (collection) {
         const options = this.getShopOptions(collection);
 
         this.getShopData(collection, options);
+        //this.renderGallery(JSONdata, options);
     },
     getShopOptions (collection) {
         const availableToSell = collection.dataset.prices;

@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Events from "./events";
+import axios from "axios";
 
 const productPageController = {
     init (productPage) {
@@ -11,8 +12,19 @@ const productPageController = {
             this.productDetails.classList.add("price-hidden");
         }
 
-        this.buildTargetElements();
-        this.buildComponents();
+        axios.get(location.pathname, {
+            headers: {
+                "Cache-Control": "no-cache, no-store, must-revalidate"
+            },
+            params: {
+                format: "json",
+                nocache: true
+            }
+        }).then((response) => {
+            this.pageData = response.data;
+            this.buildTargetElements();
+            this.buildComponents();
+        });
     },
     cacheDOM (parent) {
         this.productDetails = parent.querySelector(".ProductItem-summary");
@@ -122,16 +134,37 @@ const productPageController = {
             el: "#modal-enquiry-form"
         });
 
+        let stock = 0;
+
+        if (this.pageData.item.structuredContent) {
+            stock = this.pageData.item.structuredContent.variants[ 0 ].qtyInStock;
+        }
+
         Vue.component("enquiry-button", {
             template: `
-                <div v-on:click="showForm" class="button-wrapper">
-                    <div class="button">{{ text }}</div>
+                <div v-on:click="showForm" class="button-wrapper" v-bind:class="classObject">
+                    <div class="button" v-if="stock !== 0">{{ forSaleText }}</div>
+                    <div class="button" v-else>{{ notForSaleText }}</div>
                 </div>
             `,
             data () {
                 return {
-                    text: "Enquire"
+                    forSaleText: "Enquire",
+                    notForSaleText: "Sold",
+                    stock,
+                    isSold: false
                 };
+            },
+            computed: {
+                classObject () {
+                    if (this.stock === 0) {
+                        this.isSold = true;
+                    }
+
+                    return {
+                        disabled: this.isSold
+                    };
+                }
             },
             methods: {
                 showForm () {
